@@ -1,6 +1,8 @@
-package com.example.coach.modele;
+package com.example.coach.modele.modele;
 
 import static org.junit.Assert.*;
+
+import com.example.coach.modele.Profil;
 
 import org.junit.Test;
 
