@@ -6,11 +6,10 @@ import com.example.coach.controleur.Controle;
 import com.example.coach.outils.AccesHTTP;
 import com.example.coach.outils.AsyncResponse;
 import com.example.coach.outils.MesOutils;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -27,7 +26,7 @@ public class AccesDistant implements AsyncResponse {
      * Constructeur privé
      */
     private AccesDistant(){
-        controle = Controle.getInstance(null);
+        controle = Controle.getInstance();
     }
 
     /**
@@ -56,16 +55,21 @@ public class AccesDistant implements AsyncResponse {
             if(!code.equals("200")){
                 Log.d("erreur", "************ retour serveur code="+code+" result="+result);
             }else{
-                if(message.equals("dernier")){
-                    JSONObject info = new JSONObject(result);
-                    Integer poids = info.getInt("poids");
-                    Integer taille = info.getInt("taille");
-                    Integer age = info.getInt("age");
-                    Integer sexe = info.getInt("sexe");
-                    Date dateMesure = MesOutils.convertStringToDate(info.getString("datemesure"),
-                            "yyyy-MM-dd hh:mm:ss");
-                    Profil profil = new Profil(dateMesure, poids, taille, age, sexe);
-                    controle.setProfil(profil);
+                if(message.equals("tous")){
+                    JSONArray resultJson = new JSONArray(result);
+                    ArrayList<Profil> lesProfils = new ArrayList<Profil>();
+                    for(int k=0;k<resultJson.length();k++) {
+                        JSONObject info = new JSONObject(resultJson.get(k).toString());
+                        Integer poids = info.getInt("poids");
+                        Integer taille = info.getInt("taille");
+                        Integer age = info.getInt("age");
+                        Integer sexe = info.getInt("sexe");
+                        Date dateMesure = MesOutils.convertStringToDate(info.getString("datemesure"),
+                                "yyyy-MM-dd hh:mm:ss");
+                        Profil profil = new Profil(dateMesure, poids, taille, age, sexe);
+                        lesProfils.add(profil);
+                    }
+                    controle.setLesProfils(lesProfils);
                 }
             }
         } catch (JSONException e) {

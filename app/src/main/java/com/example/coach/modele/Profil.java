@@ -3,10 +3,8 @@ package com.example.coach.modele;
 import android.util.Log;
 
 import com.example.coach.outils.MesOutils;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,7 +12,7 @@ import java.util.Date;
  * Classe métier Profil
  * contient les informations du profil
  */
-public class Profil implements Serializable {
+public class Profil implements Serializable, Comparable {
 
     // constantes
     private static final Integer minFemme = 15; // maigre si en dessous
@@ -120,4 +118,13 @@ public class Profil implements Serializable {
         return jsonProfil;
     }
 
+    /**
+     * Comparaison des profils sur dateMesure
+     * @param o
+     * @return le résultat de la comparaison
+     */
+    @Override
+    public int compareTo(Object o) {
+        return dateMesure.compareTo(((Profil)o).getDateMesure());
+    }
 }
