@@ -3,7 +3,7 @@ package com.example.coach.modele;
 import android.util.Log;
 
 import com.example.coach.controleur.Controle;
-import com.example.coach.outils.AccesHTTP;
+import com.example.coach.outils.AccesREST;
 import com.example.coach.outils.AsyncResponse;
 import com.example.coach.outils.MesOutils;
 import org.json.JSONArray;
@@ -18,7 +18,7 @@ import java.util.Date;
  */
 public class AccesDistant implements AsyncResponse {
 
-    private static final String SERVERADDR = "http://192.168.0.16/coach/serveurcoach.php";
+    private static final String SERVERADDR = "http://192.168.0.16/rest_coach/api/";
     private static AccesDistant instance;
     private Controle controle;
 
@@ -55,7 +55,7 @@ public class AccesDistant implements AsyncResponse {
             if(!code.equals("200")){
                 Log.d("erreur", "************ retour serveur code="+code+" result="+result);
             }else{
-                if(message.equals("tous")){
+                if(message.equals("GET")){
                     JSONArray resultJson = new JSONArray(result);
                     ArrayList<Profil> lesProfils = new ArrayList<Profil>();
                     for(int k=0;k<resultJson.length();k++) {
@@ -83,11 +83,28 @@ public class AccesDistant implements AsyncResponse {
      * @param lesDonneesJSON
      */
     public void envoi(String operation, JSONObject lesDonneesJSON){
-        AccesHTTP accesDonnees = new AccesHTTP();
+        AccesREST accesDonnees = new AccesREST();
         accesDonnees.delegate = this;
-        accesDonnees.addParam("operation", operation);
-        accesDonnees.addParam("lesdonnees", lesDonneesJSON.toString());
-        accesDonnees.execute(SERVERADDR);
+        String requestMethod = null; ;
+        switch (operation){
+            case "tous" :
+                requestMethod = "GET";
+                break;
+            case "enreg" :
+                requestMethod = "POST";
+                break;
+            case "suppr" :
+                requestMethod = "DELETE";
+                break;
+        }
+        if(requestMethod != null){
+            accesDonnees.setRequestMethod(requestMethod);
+            accesDonnees.addParam("profil");
+            if(lesDonneesJSON != null && lesDonneesJSON.length() > 0) {
+                accesDonnees.addParam(lesDonneesJSON.toString());
+            }
+            accesDonnees.execute(SERVERADDR);
+        }
     }
 
 }
