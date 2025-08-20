@@ -64,6 +64,10 @@ public class Profil {
         return sexe;
     }
 
+    public Date getDateMesure() {
+        return dateMesure;
+    }
+
     /**
      *
      * @return nom du fichier drawable qui correspond à l'img
