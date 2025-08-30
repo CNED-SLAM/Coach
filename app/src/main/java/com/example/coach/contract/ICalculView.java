@@ -3,7 +3,7 @@ package com.example.coach.contract;
 /**
  * Contrat pour que le CalculPresenter puisse envoyer des informations à la vue
  */
-public interface ICalculView {
+public interface ICalculView extends IAllView {
     /**
      * Méthode permettant le transfert des résultats vers la vue
      * @param image nom du fichier drawable pour le smiley

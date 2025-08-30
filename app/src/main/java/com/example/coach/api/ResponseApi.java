@@ -1,8 +1,8 @@
 package com.example.coach.api;
 
 /**
- * Contenu de la réponse reçue de l'api
- * @param <T>
+ * Structure de la réponse reçue de l'api
+ * @param <T> type de la partie result
  */
 public class ResponseApi<T> {
     /**

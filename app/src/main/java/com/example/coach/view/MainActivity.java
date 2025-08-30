@@ -1,13 +1,8 @@
 package com.example.coach.view;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,21 +11,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.coach.R;
-import com.example.coach.contract.ICalculView;
-import com.example.coach.presenter.CalculPresenter;
 
 /**
- * Activity qui permet le calcul de l'img
+ * Activity qui affiche me menu
  */
-public class MainActivity extends AppCompatActivity implements ICalculView {
+public class MainActivity extends AppCompatActivity {
 
-    private EditText txtPoids, txtTaille, txtAge;
-    private RadioButton rdHomme;
-    private RadioButton rdFemme;
-    private TextView lblIMG;
-    private ImageView imgSmiley;
-    private Button btnCalc;
-    private CalculPresenter presenter;
+    private ImageButton btnMonIMG;
+    private ImageButton btnMonHistorique;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,84 +38,32 @@ public class MainActivity extends AppCompatActivity implements ICalculView {
      */
     private void init(){
         chargeObjetsGraphiques();
-        presenter = new CalculPresenter(this);
-        presenter.chargerDernierProfil();
-        btnCalc.setOnClickListener(v -> btnCalc_clic());
+        creerMenu();
     }
 
     /**
      * Récupération des objets graphiques
      */
     private void chargeObjetsGraphiques(){
-        txtPoids = findViewById(R.id.txtPoids);
-        txtTaille = findViewById(R.id.txtTaille);
-        txtAge = findViewById(R.id.txtAge);
-        rdHomme = findViewById(R.id.rdHomme);
-        rdFemme = findViewById(R.id.rdFemme);
-        lblIMG = findViewById(R.id.lblIMG);
-        imgSmiley = findViewById(R.id.imgSmiley);
-        btnCalc = findViewById(R.id.btnCalc);
+        btnMonIMG = findViewById(R.id.btnMonIMG);
+        btnMonHistorique = findViewById(R.id.btnMonHistorique);
     }
 
     /**
-     * Traitements réalisés lors du clic sur le bouton Calculer
+     * Demande de création des écoutes sur les boutons
      */
-    private void btnCalc_clic(){
-        Integer poids = 0, taille = 0, age = 0, sexe = 0;
-        try {
-            poids = Integer.parseInt(txtPoids.getText().toString());
-            taille = Integer.parseInt(txtTaille.getText().toString());
-            age = Integer.parseInt(txtAge.getText().toString());
-        } catch (Exception ignored) {}
+    private void creerMenu(){
+        btnMonIMG.setOnClickListener(v -> ecouteMenu(CalculActivity.class));
+        btnMonHistorique.setOnClickListener(v -> ecouteMenu(HistoActivity.class));
 
-        if (rdHomme.isChecked()) {
-            sexe = 1;
-        }
-
-        if (poids == 0 || taille == 0 || age == 0) {
-            Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
-        } else {
-            presenter.creerProfil(poids, taille, age, sexe);
-        }
     }
 
     /**
-     * Méthode permettant l'affichage du résultat du calcul de l'img
-     * @param image nom du fichier drawable pour le smiley
-     * @param img valeur de l'img calculé
-     * @param message information textuelle correspondant à l'img
-     * @param normal vrai si l'img est normal
+     * Ouvre l'activity correspondant au paramètre
+     * @param classe
      */
-    @Override
-    public void afficherResultat(String image, double img, String message, boolean normal) {
-        int imageId = getResources().getIdentifier(image, "drawable", getPackageName());
-        if (imageId != 0) {
-            imgSmiley.setImageResource(imageId);
-        } else {
-            imgSmiley.setImageResource(R.drawable.normal);
-        }
-
-        String texte = String.format("%.01f", img) + " : IMG " + message;
-        lblIMG.setText(texte);
-        lblIMG.setTextColor(normal ? Color.GREEN : Color.RED);
-    }
-
-    /**
-     * Méthode permettant l'affichage des informations de base
-     * @param poids
-     * @param taille
-     * @param age
-     * @param sexe
-     */
-    @Override
-    public void remplirChamps(Integer poids, Integer taille, Integer age, Integer sexe) {
-        txtPoids.setText(poids.toString());
-        txtTaille.setText(taille.toString());
-        txtAge.setText(age.toString());
-        if (sexe == 1){
-            rdHomme.setChecked(true);
-        }else{
-            rdFemme.setChecked(true);
-        }
+    private void ecouteMenu(Class classe){
+        Intent intent = new Intent(MainActivity.this, classe);
+        startActivity(intent);
     }
 }
